@@ -1,0 +1,47 @@
+---
+title: "Optional week 3 assignment"
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Question: Based on your analysis, would you conclude that there is a significant association between college major category and income?
+```{r, echo = FALSE}
+library(collegeIncome)
+data(college)
+```
+
+create data frame with major_category and median earnings per row
+```{r}
+cat <- college$major_category
+earn <- college$median
+df <- data.frame(cat, earn)
+head(df)
+```
+
+provide aggregate means per category and sort to see signifcant changes between categories
+```{r}
+agg <- aggregate(df$earn ~ df$cat, df, mean)
+agg <- agg[order(agg$`df$earn`, decreasing = TRUE),]
+agg
+```
+
+Relevel the factors for the lowest income ("Interdisciplinary") and fit a model for the data 
+```{r}
+df$cat <- relevel(df$cat, ref = "Interdisciplinary")
+fit <- lm(df$earn ~ df$cat)
+summary(fit)
+```
+Summary shows that there is no signifcant change in income for categories as compared to the lowest income level
+
+Boxplot of categories
+```{r}
+boxplot(df$earn ~  df$cat, las = 2)
+```
+
